@@ -36,18 +36,18 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: './mail-worker/package-lock.json'
+          cache-dependency-path: 'mail-worker/package-lock.json'
 
       - name: 📥 Install dependencies
         run: npm ci
-        working-directory: ./mail-worker
+        working-directory: mail-worker
 
       - name: 📡 Disable wrangler telemetry
-        working-directory: ./mail-worker
+        working-directory: mail-worker
         run: npx wrangler telemetry disable -c wrangler-action.toml
 
       - name: 🤫 Set Worker secrets (ignore if already exists)
-        working-directory: ./mail-worker
+        working-directory: mail-worker
         run: |
           WORKER_NAME="cloud-mail"
           CONFIG_FILE="wrangler-action.toml"
@@ -67,7 +67,7 @@ jobs:
 
       - name: 🛠️ Prepare Config and Deploy
         id: deploy
-        working-directory: ./mail-worker
+        working-directory: mail-worker
         run: |
           if [ -z "$D1_DATABASE_ID" ] || [ -z "$KV_NAMESPACE_ID" ] || [ -z "$R2_BUCKET_NAME" ]; then
             echo "⚠️ Required secrets (D1_DATABASE_ID, KV_NAMESPACE_ID, or R2_BUCKET_NAME) are not set."
@@ -107,7 +107,7 @@ jobs:
             exit 0
           fi
 
-          echo "⏳ Waiting 10 秒之前 before checking initialization status..."
+          echo "⏳ Waiting 10 seconds before checking initialization status..."
           sleep 10
 
           HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt "$INIT_URL")
